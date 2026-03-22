@@ -2,9 +2,6 @@ import { LoadingOverlay } from "@/components/LoadingOverlay";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Award,
   Briefcase,
@@ -22,7 +19,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // ──────────────────────────────────────────────
 // DATA
@@ -77,7 +74,7 @@ const EXPERIENCE = [
   {
     role: "Intern",
     company: "Evolve x",
-    duration: "2024 – Present",
+    duration: "2026 – Present",
     location: "India",
     type: "Internship",
     bullets: [
@@ -198,8 +195,9 @@ const PARTICLES = [
 // HOOKS
 // ──────────────────────────────────────────────
 
-function useScrollReveal() {
+function useScrollReveal(enabled: boolean) {
   useEffect(() => {
+    if (!enabled) return;
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -208,14 +206,14 @@ function useScrollReveal() {
           }
         }
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+      { threshold: 0.05, rootMargin: "0px 0px -30px 0px" },
     );
 
     const elements = document.querySelectorAll(".reveal");
     for (const el of elements) observer.observe(el);
 
     return () => observer.disconnect();
-  }, []);
+  }, [enabled]);
 }
 
 function useActiveSection() {
@@ -318,12 +316,38 @@ function Navbar({
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-hidden ${
         scrolled
           ? "bg-background/80 backdrop-blur-xl border-b border-border shadow-glow-sm"
           : "bg-transparent"
       }`}
     >
+      {/* Header animated gradient blobs */}
+      <div className="absolute inset-0 pointer-events-none -z-10">
+        <div
+          className="absolute -top-8 left-[5%] w-64 h-32 rounded-full blur-[60px] orb-drift-1 opacity-60"
+          style={{
+            background:
+              "radial-gradient(circle, oklch(0.72 0.28 285 / 0.45), transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute -top-6 right-[10%] w-48 h-28 rounded-full blur-[50px] orb-drift-2 opacity-50"
+          style={{
+            background:
+              "radial-gradient(circle, oklch(0.62 0.28 315 / 0.4), transparent 70%)",
+            animationDelay: "3s",
+          }}
+        />
+        <div
+          className="absolute top-0 left-[45%] w-40 h-24 rounded-full blur-[45px] orb-drift-3 opacity-40"
+          style={{
+            background:
+              "radial-gradient(circle, oklch(0.55 0.25 230 / 0.35), transparent 70%)",
+            animationDelay: "6s",
+          }}
+        />
+      </div>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Logo — avatar image */}
         <button
@@ -333,12 +357,18 @@ function Navbar({
           data-ocid="nav.link"
         >
           <div className="relative">
-            <img
-              src="/assets/uploads/image-2-3.png"
-              alt="Shrutisree"
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-primary/50 group-hover:ring-primary transition-all duration-300"
-              style={{ boxShadow: "0 0 12px oklch(0.72 0.28 285 / 0.4)" }}
-            />
+            <div
+              className="w-9 h-9 rounded-full ring-2 ring-primary/50 group-hover:ring-primary transition-all duration-300 overflow-hidden"
+              style={{
+                boxShadow: "0 0 12px oklch(0.72 0.28 285 / 0.4)",
+              }}
+            >
+              <img
+                src="/assets/uploads/Screenshot-2026-03-22-055020-1.png"
+                alt="Shrutisree"
+                className="w-full h-full object-cover object-top rounded-full"
+              />
+            </div>
             <span
               className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-background animate-pulse"
               style={{ background: "oklch(0.72 0.28 285)" }}
@@ -350,8 +380,8 @@ function Navbar({
         </button>
 
         {/* Desktop Links */}
-        <ul className="hidden lg:flex items-center gap-1">
-          {NAV_LINKS.slice(1).map((link) => {
+        <ul className="hidden md:flex items-center gap-0.5">
+          {NAV_LINKS.map((link) => {
             const sectionId = link.href.slice(1);
             const isActive = active === sectionId;
             return (
@@ -359,7 +389,7 @@ function Navbar({
                 <button
                   type="button"
                   onClick={() => handleNav(link.href)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`px-2 py-1.5 rounded-md text-xs font-medium transition-all duration-200 ${
                     isActive
                       ? "bg-primary/20 text-primary nav-link-active"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
@@ -395,18 +425,18 @@ function Navbar({
             {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </Button>
           <a
-            href="mailto:shrutisree@example.com"
-            className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-accent transition-colors"
+            href="mailto:shrutisreetadepalli@gmail.com"
+            className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-accent hover:shadow-[0_0_12px_3px_rgba(139,92,246,0.6)] transition-all duration-200"
             aria-label="Email"
             data-ocid="nav.link"
           >
             <Mail className="w-4 h-4" />
           </a>
           <a
-            href="https://linkedin.com"
+            href="https://www.linkedin.com/in/shrutisree-tadepalli-6a3163362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-accent transition-colors"
+            className="hidden sm:inline-flex items-center justify-center w-9 h-9 rounded-full hover:bg-accent hover:shadow-[0_0_12px_3px_rgba(139,92,246,0.6)] transition-all duration-200"
             aria-label="LinkedIn"
             data-ocid="nav.link"
           >
@@ -415,7 +445,7 @@ function Navbar({
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden rounded-full"
+            className="md:hidden rounded-full"
             onClick={() => setOpen(!open)}
             data-ocid="nav.toggle"
           >
@@ -426,7 +456,7 @@ function Navbar({
 
       {/* Mobile Menu */}
       {open && (
-        <div className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-border">
+        <div className="md:hidden bg-background/95 backdrop-blur-xl border-b border-border">
           <ul className="max-w-7xl mx-auto px-4 py-4 space-y-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
@@ -483,6 +513,119 @@ function TypewriterSubtitle({ dark }: { dark: boolean }) {
 }
 
 function Hero({ dark }: { dark: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let rafId: number;
+    let spawnTimer: ReturnType<typeof setTimeout>;
+
+    const resize = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    interface Star {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      length: number;
+      opacity: number;
+      fade: number;
+      color: string;
+    }
+
+    const stars: Star[] = [];
+    const COLORS = ["255,255,255", "180,120,255", "100,220,255"];
+
+    const spawnStar = () => {
+      const edge = Math.random() < 0.6 ? "top" : "left";
+      const x =
+        edge === "top"
+          ? Math.random() * canvas.width
+          : Math.random() * canvas.width * 0.3;
+      const y =
+        edge === "top"
+          ? Math.random() * canvas.height * 0.3
+          : Math.random() * canvas.height;
+      const speed = 6 + Math.random() * 6;
+      const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.4;
+      stars.push({
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        length: 80 + Math.random() * 120,
+        opacity: 1,
+        fade: 0.015 + Math.random() * 0.01,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      });
+    };
+
+    const scheduleSpawn = () => {
+      spawnTimer = setTimeout(
+        () => {
+          if (stars.length < 3) spawnStar();
+          scheduleSpawn();
+        },
+        1500 + Math.random() * 1500,
+      );
+    };
+
+    spawnStar();
+    scheduleSpawn();
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = stars.length - 1; i >= 0; i--) {
+        const s = stars[i];
+        const tailX =
+          s.x - s.vx * (s.length / Math.sqrt(s.vx * s.vx + s.vy * s.vy));
+        const tailY =
+          s.y - s.vy * (s.length / Math.sqrt(s.vx * s.vx + s.vy * s.vy));
+        const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
+        grad.addColorStop(0, `rgba(${s.color},0)`);
+        grad.addColorStop(1, `rgba(${s.color},${s.opacity})`);
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(s.x, s.y);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        // head glow
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${s.color},${s.opacity})`;
+        ctx.fill();
+        s.x += s.vx;
+        s.y += s.vy;
+        s.opacity -= s.fade;
+        if (
+          s.opacity <= 0 ||
+          s.x > canvas.width + 50 ||
+          s.y > canvas.height + 50
+        ) {
+          stars.splice(i, 1);
+        }
+      }
+      rafId = requestAnimationFrame(draw);
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(spawnTimer);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
   return (
     <section
       id="hero"
@@ -498,35 +641,44 @@ function Hero({ dark }: { dark: boolean }) {
         }}
       />
 
-      {/* Animated glow orbs */}
+      {/* Shooting stars canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ zIndex: -5 }}
+      />
+
+      {/* Animated gradient blobs */}
       <div className="absolute inset-0 -z-10">
         <div
-          className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-25 animate-gradient orb-drift-1"
+          className="absolute top-[10%] left-[10%] w-[600px] h-[600px] rounded-full blur-[120px] orb-drift-1"
           style={{
             background:
-              "radial-gradient(circle, oklch(0.72 0.28 285 / 0.8), oklch(0.62 0.28 315 / 0.4))",
+              "radial-gradient(circle, oklch(0.72 0.28 285 / 0.35), oklch(0.62 0.28 315 / 0.15))",
           }}
         />
         <div
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-20 orb-drift-2"
+          className="absolute bottom-[5%] right-[8%] w-[500px] h-[500px] rounded-full blur-[100px] orb-drift-2"
           style={{
             background:
-              "radial-gradient(circle, oklch(0.55 0.25 230 / 0.5), oklch(0.45 0.22 210 / 0.2))",
-            animationDelay: "2s",
+              "radial-gradient(circle, oklch(0.55 0.25 230 / 0.3), oklch(0.45 0.22 210 / 0.1))",
+            animationDelay: "4s",
           }}
         />
         <div
-          className="absolute top-2/3 left-1/3 w-72 h-72 rounded-full blur-3xl opacity-15 orb-drift-3"
+          className="absolute top-[50%] left-[55%] w-[450px] h-[450px] rounded-full blur-[90px] orb-drift-3"
           style={{
             background:
-              "radial-gradient(circle, oklch(0.55 0.25 230 / 0.5), transparent)",
+              "radial-gradient(circle, oklch(0.62 0.28 315 / 0.28), oklch(0.72 0.28 285 / 0.1))",
+            animationDelay: "8s",
           }}
         />
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-3xl opacity-8"
+          className="absolute top-[20%] right-[20%] w-[350px] h-[350px] rounded-full blur-[80px] orb-drift-1"
           style={{
             background:
-              "radial-gradient(circle, oklch(0.72 0.28 285 / 0.15), transparent 70%)",
+              "radial-gradient(circle, oklch(0.55 0.25 230 / 0.25), transparent 70%)",
+            animationDelay: "12s",
           }}
         />
       </div>
@@ -562,60 +714,6 @@ function Hero({ dark }: { dark: boolean }) {
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center">
-        {/* Avatar */}
-        <div
-          className="flex justify-center mb-8 animate-slide-up"
-          style={{ animationDelay: "0.05s", opacity: 0 }}
-        >
-          <div className="relative">
-            {/* Outer glow ring */}
-            <div
-              className="absolute inset-0 rounded-full animate-pulse-ring"
-              style={{
-                background:
-                  "linear-gradient(135deg, oklch(0.72 0.28 285 / 0.5), oklch(0.62 0.28 315 / 0.3), oklch(0.55 0.25 230 / 0.2))",
-                transform: "scale(1.18)",
-                filter: "blur(8px)",
-              }}
-            />
-            {/* Spinning gradient border ring */}
-            <div
-              className="absolute -inset-1.5 rounded-full animate-spin-slow"
-              style={{
-                background:
-                  "conic-gradient(from 0deg, oklch(0.72 0.28 285), oklch(0.55 0.25 230), oklch(0.62 0.28 315), oklch(0.72 0.28 285))",
-                padding: "2px",
-              }}
-            />
-            {/* Avatar image */}
-            <div
-              className="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full overflow-hidden"
-              style={{
-                boxShadow:
-                  "0 0 0 3px oklch(0.72 0.28 285 / 0.6), 0 0 40px oklch(0.72 0.28 285 / 0.35), 0 0 80px oklch(0.62 0.28 315 / 0.2)",
-              }}
-            >
-              <img
-                src="/assets/uploads/image-2-3.png"
-                alt="Shrutisree Tadepalli"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* Sparkle decoration */}
-            <div
-              className="absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-sm animate-float"
-              style={{
-                background:
-                  "linear-gradient(135deg, oklch(0.72 0.28 285), oklch(0.62 0.28 315))",
-                boxShadow: "0 0 14px oklch(0.72 0.28 285 / 0.6)",
-                animationDelay: "0.5s",
-              }}
-            >
-              ✨
-            </div>
-          </div>
-        </div>
-
         {/* Welcome badge */}
         <div
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8 animate-slide-up"
@@ -728,45 +826,9 @@ function About() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeading icon={<User className="w-5 h-5" />} label="About Me" />
 
-        <div className="grid lg:grid-cols-5 gap-16 items-center mt-16">
-          {/* Avatar */}
-          <div className="lg:col-span-2 flex justify-center reveal">
-            <div className="relative">
-              <div
-                className="w-64 h-64 sm:w-72 sm:h-72 rounded-3xl grad-border overflow-hidden"
-                style={{
-                  boxShadow:
-                    "0 0 40px oklch(0.72 0.28 285 / 0.2), 0 0 80px oklch(0.62 0.28 315 / 0.1)",
-                }}
-              >
-                <img
-                  src="/assets/uploads/image-2-3.png"
-                  alt="Shrutisree Tadepalli"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {/* Floating decoration */}
-              <div
-                className="absolute -top-4 -right-4 w-16 h-16 rounded-2xl flex items-center justify-center text-2xl animate-float shadow-glow"
-                style={{
-                  background:
-                    "linear-gradient(135deg, oklch(0.72 0.28 285), oklch(0.62 0.28 315))",
-                  animationDelay: "1s",
-                }}
-              >
-                ✨
-              </div>
-              <div
-                className="absolute -bottom-4 -left-4 w-14 h-14 rounded-2xl flex items-center justify-center text-xl animate-float border border-primary/30 bg-card"
-                style={{ animationDelay: "2s" }}
-              >
-                🚀
-              </div>
-            </div>
-          </div>
-
+        <div className="mt-16">
           {/* Text */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="max-w-3xl mx-auto space-y-6">
             <p className="text-lg leading-relaxed text-muted-foreground reveal reveal-delay-1">
               Hey! I'm{" "}
               <span className="text-foreground font-semibold">Shruti</span> — a
@@ -1218,6 +1280,10 @@ function Hackathons() {
                     src={h.image}
                     alt={h.name}
                     className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
                   />
                 </div>
                 <CardContent className="p-6">
@@ -1259,6 +1325,10 @@ function Certifications() {
               <div className="w-full h-40 overflow-hidden">
                 <img
                   src={cert.image}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
                   alt={cert.name}
                   className="w-full h-full object-cover"
                 />
@@ -1280,152 +1350,48 @@ function Certifications() {
 }
 
 function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSent(true);
-    setForm({ name: "", email: "", message: "" });
-    setTimeout(() => setSent(false), 4000);
-  };
-
   return (
     <section id="contact" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <SectionHeading icon={<Mail className="w-5 h-5" />} label="Contact" />
 
-        <div className="mt-16 grid lg:grid-cols-2 gap-16">
-          {/* Info */}
-          <div className="reveal space-y-8">
-            <div>
-              <h3 className="font-display font-bold text-2xl text-foreground mb-4">
-                Let's build something great together.
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Whether it's a job opportunity, collaboration on an exciting
-                project, or just a chat about technology — my inbox is always
-                open. I'll try to respond within 24 hours.
-              </p>
-            </div>
+        <div className="mt-16 flex flex-col items-center text-center reveal">
+          <h3 className="font-display font-bold text-3xl text-foreground mb-12">
+            Get in Touch
+          </h3>
 
-            <div className="space-y-4">
-              {[
-                {
-                  icon: <Mail className="w-5 h-5" />,
-                  label: "Email",
-                  value: "shrutithequeen5@gmail.com",
-                  href: "mailto:shrutithequeen5@gmail.com",
-                },
-                {
-                  icon: <Linkedin className="w-5 h-5" />,
-                  label: "LinkedIn",
-                  value: "linkedin.com/in/shrutisree-tadepalli",
-                  href: "https://www.linkedin.com/in/shrutisree-tadepalli-6a3163362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
-                },
-              ].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:border-primary/40 hover:bg-primary/5 hover:scale-[1.02] transition-all duration-200 group"
-                  data-ocid="contact.link"
-                >
-                  <div className="p-2.5 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">
-                      {item.label}
-                    </p>
-                    <p className="text-sm font-medium text-foreground">
-                      {item.value}
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
+          <div className="flex flex-col sm:flex-row gap-6">
+            <a
+              href="mailto:shrutisreetadepalli@gmail.com"
+              className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card hover:border-primary/40 hover:bg-primary/5 hover:scale-[1.04] hover:shadow-[0_0_24px_6px_rgba(139,92,246,0.5)] transition-all duration-200 group min-w-[220px]"
+            >
+              <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
+                <Mail className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-muted-foreground">Email</p>
+                <p className="text-sm font-medium text-foreground">
+                  shrutisreetadepalli@gmail.com
+                </p>
+              </div>
+            </a>
 
-          {/* Form */}
-          <div className="reveal reveal-delay-2">
-            <Card className="grad-border bg-card">
-              <CardContent className="p-8">
-                {sent ? (
-                  <div
-                    className="flex flex-col items-center justify-center py-12 text-center"
-                    data-ocid="contact.success_state"
-                  >
-                    <div className="text-5xl mb-4">🎉</div>
-                    <h3 className="font-display font-bold text-xl text-foreground mb-2">
-                      Message sent!
-                    </h3>
-                    <p className="text-muted-foreground text-sm">
-                      Thanks for reaching out. I'll get back to you soon.
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-name">Name</Label>
-                      <Input
-                        id="contact-name"
-                        placeholder="Your name"
-                        value={form.name}
-                        onChange={(e) =>
-                          setForm((p) => ({ ...p, name: e.target.value }))
-                        }
-                        required
-                        data-ocid="contact.input"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-email">Email</Label>
-                      <Input
-                        id="contact-email"
-                        type="email"
-                        placeholder="your@email.com"
-                        value={form.email}
-                        onChange={(e) =>
-                          setForm((p) => ({ ...p, email: e.target.value }))
-                        }
-                        required
-                        data-ocid="contact.input"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="contact-message">Message</Label>
-                      <Textarea
-                        id="contact-message"
-                        placeholder="Tell me about your project or opportunity..."
-                        rows={5}
-                        value={form.message}
-                        onChange={(e) =>
-                          setForm((p) => ({ ...p, message: e.target.value }))
-                        }
-                        required
-                        data-ocid="contact.textarea"
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      className="w-full font-semibold"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, oklch(0.72 0.28 285), oklch(0.62 0.28 315))",
-                        color: "white",
-                        border: "none",
-                      }}
-                      data-ocid="contact.submit_button"
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Send Message
-                    </Button>
-                  </form>
-                )}
-              </CardContent>
-            </Card>
+            <a
+              href="https://www.linkedin.com/in/shrutisree-tadepalli-6a3163362?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card hover:border-primary/40 hover:bg-primary/5 hover:scale-[1.04] hover:shadow-[0_0_24px_6px_rgba(139,92,246,0.5)] transition-all duration-200 group min-w-[220px]"
+            >
+              <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 transition-colors">
+                <Linkedin className="w-6 h-6" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs text-muted-foreground">LinkedIn</p>
+                <p className="text-sm font-medium text-foreground">
+                  Connect with me
+                </p>
+              </div>
+            </a>
           </div>
         </div>
       </div>
@@ -1488,7 +1454,8 @@ function Footer() {
 // ──────────────────────────────────────────────
 
 export default function App() {
-  const [loaded, setLoaded] = useState(false);
+  const [loadingDone, setLoadingDone] = useState(false);
+
   const [dark, setDark] = useState(true);
 
   useEffect(() => {
@@ -1502,19 +1469,20 @@ export default function App() {
 
   const toggleDark = useCallback(() => setDark((d) => !d), []);
 
-  useScrollReveal();
+  useScrollReveal(loadingDone);
+
+  if (!loadingDone) {
+    return <LoadingOverlay onComplete={() => setLoadingDone(true)} />;
+  }
 
   return (
     <>
-      {!loaded && <LoadingOverlay onComplete={() => setLoaded(true)} />}
       <div
         className="min-h-screen bg-background"
         style={{
           background: dark
             ? "radial-gradient(ellipse at 50% 0%, #0d1f3c 0%, #060d1f 40%, #020810 100%)"
             : undefined,
-          opacity: loaded ? 1 : 0,
-          transition: "opacity 600ms ease",
         }}
       >
         <Navbar dark={dark} toggleDark={toggleDark} />
