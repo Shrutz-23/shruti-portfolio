@@ -183,6 +183,16 @@
     animation-delay: 1.2s;
   }
 
+  .custom-responsive {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .custom-responsive {
+      display: flex;
+    }
+  }
+
   /* Active nav link shimmer */
   .nav-link-active {
     position: relative;

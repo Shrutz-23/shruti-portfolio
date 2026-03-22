@@ -362,7 +362,7 @@ function Navbar({
         </button>
 
         {/* Desktop Links */}
-        <ul className="hidden md:flex items-center gap-0.5">
+        <ul className="custom-responsive items-center gap-0.5">
           {NAV_LINKS.map((link) => {
             const sectionId = link.href.slice(1);
             const isActive = active === sectionId;
@@ -855,7 +855,7 @@ function Education() {
 
         <div className="mt-16">
           {/* Desktop: alternating left-right timeline */}
-          <div className="hidden md:block relative">
+          <div className="custom-responsive md:block relative">
             {/* Center vertical line */}
             <div
               className="absolute left-1/2 top-4 bottom-4 w-0.5 -translate-x-1/2"
