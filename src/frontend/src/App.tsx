@@ -349,32 +349,14 @@ function Navbar({
         />
       </div>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        {/* Logo — avatar image */}
+        {/* Logo — name only */}
         <button
           type="button"
           onClick={() => handleNav("#hero")}
           className="flex items-center gap-2.5 group"
           data-ocid="nav.link"
         >
-          <div className="relative">
-            <div
-              className="w-9 h-9 rounded-full ring-2 ring-primary/50 group-hover:ring-primary transition-all duration-300 overflow-hidden"
-              style={{
-                boxShadow: "0 0 12px oklch(0.72 0.28 285 / 0.4)",
-              }}
-            >
-              <img
-                src="/assets/uploads/Screenshot-2026-03-22-055020-1.png"
-                alt="Shrutisree"
-                className="w-full h-full object-cover object-top rounded-full"
-              />
-            </div>
-            <span
-              className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-background animate-pulse"
-              style={{ background: "oklch(0.72 0.28 285)" }}
-            />
-          </div>
-          <span className="font-display font-bold text-sm grad-text hidden sm:block">
+          <span className="font-display font-bold text-sm grad-text">
             Shrutisree
           </span>
         </button>
